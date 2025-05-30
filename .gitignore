@@ -1,0 +1,12 @@
+# Node.js dependencies
+node_modules
+
+# Production build
+dist
+
+# Local Vercel settings
+.vercel
+
+# System files
+.DS_Store
+Thumbs.db
