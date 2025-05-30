@@ -194,28 +194,44 @@ function AuctionApp() {
         )}
       </div>
 
-      {/* 선수 목록 */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        {teamLeaders.map(name => (
-          <div key={name} className="p-4 border rounded">
-            <h3 className="font-semibold mb-2">{name}</h3>
-            <p>잔여 예산: {budgets[name].budget}P</p>
-            <p>선수 수: {budgets[name].players.length}명</p>
-            <ul className="text-sm mt-2 list-disc list-inside">
-              {budgets[name].players.map(id => {
-                const player = players.find(p => p.id === id);
-                return (
-                  <li key={id}>
-                    {player?.name}
-                    <br />
-                    {player?.profile || '프로필 정보 없음'}
-                    <Button onClick={() => setViewProfile(player)}>보기</Button> {/* 보기 버튼 */}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+      {/* 경매 선수 섹션 */}
+      <div className="mb-6">
+        {currentAuction ? (
+          <Card className="p-4 mb-4">
+            <CardContent>
+              <h3 className="font-semibold text-lg mb-2">경매 선수</h3>
+              <p>{currentAuction.name}</p>
+              <p>입찰가: {currentBid}P</p>
+              <p>남은 시간: {timeLeft}초</p>
+              <p>프로필: {currentAuction.profile || '정보 없음'}</p>
+              {loggedInLeader !== '게스트' && (
+                <div className="flex gap-2 mt-2">
+                  <Input type="number" value={currentBid} onChange={e => setCurrentBid(parseInt(e.target.value))} />
+                  <Button onClick={handleBid}>입찰</Button>
+                  {highestBidder === loggedInLeader && <Button onClick={handleFinalize}>낙찰</Button>}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <p>진행 중인 경매가 없습니다.</p>
+        )}
+      </div>
+
+      {/* 전체 선수 요약 프로필 섹션 */}
+      <div className="mb-6">
+        <h3 className="font-semibold text-lg mb-4">전체 선수 프로필</h3>
+        <div className="grid grid-cols-5 gap-4">
+          {players.map((player) => (
+            <Card key={player.id} className="cursor-pointer hover:shadow-md" onClick={() => setViewProfile(player)}>
+              <CardContent className="text-center">
+                <p className="font-semibold">{player.name}</p>
+                <p>{player.position}</p>
+                <p className="text-sm text-gray-500">{player.tier}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* 선수 프로필 보기 / 수정 */}
@@ -254,30 +270,27 @@ function AuctionApp() {
         </div>
       )}
 
-      {/* 경매 진행 부분 */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h3 className="font-semibold text-lg mb-2">경매 선수</h3>
-          {currentAuction ? (
-            <Card>
-              <CardContent>
-                <p>{currentAuction.name}</p>
-                <p>입찰가: {currentBid}원</p>
-                <p>남은 시간: {timeLeft}초</p>
-                <p>프로필: {currentAuction.profile || '정보 없음'}</p>
-                {loggedInLeader !== '게스트' && (
-                  <div className="flex gap-2 mt-2">
-                    <Input type="number" value={currentBid} onChange={e => setCurrentBid(parseInt(e.target.value))} />
-                    <Button onClick={handleBid}>입찰</Button>
-                    {highestBidder === loggedInLeader && <Button onClick={handleFinalize}>낙찰</Button>}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ) : (
-            <p>진행 중인 경매가 없습니다.</p>
-          )}
-        </div>
+      {/* 각 팀 정보 섹션 */}
+      <div className="grid grid-cols-4 gap-4">
+        {teamLeaders.map(name => (
+          <Card key={name} className="p-4">
+            <CardContent>
+              <h3 className="font-semibold mb-2">{name}</h3>
+              <p>잔여 예산: {budgets[name].budget}P</p>
+              <p>선수 수: {budgets[name].players.length}명</p>
+              <ul className="text-sm mt-2 list-disc list-inside">
+                {budgets[name].players.map(id => {
+                  const player = players.find(p => p.id === id);
+                  return (
+                    <li key={id}>
+                      {player?.name} ({player?.price}P)
+                    </li>
+                  );
+                })}
+              </ul>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
