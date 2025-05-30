@@ -1,5 +1,4 @@
 
-// src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from './components/ui/card';
 import { Button } from './components/ui/button';
@@ -157,9 +156,7 @@ function AuctionApp() {
           className="w-full"
           onClick={() => {
             if (!loggedInLeader) return alert('사용자를 선택하세요');
-            if (loggedInLeader === '게스트') {
-              setIsLoggedIn(true);
-            } else if (password === '8751') {
+            if (loggedInLeader === '게스트' || password === '8751') {
               setIsLoggedIn(true);
             } else {
               alert('비밀번호가 틀렸습니다.');
@@ -179,36 +176,54 @@ function AuctionApp() {
         {loggedInLeader === '이재혁' && (
           <div className="flex gap-2">
             <Button onClick={startAuction}>무작위 선수 경매 시작</Button>
-            <Button onClick={() => setIsPaused(prev => !prev)}>
-              {isPaused ? '재개' : '일시정지'}
-            </Button>
+            <Button onClick={() => setIsPaused(prev => !prev)}>{isPaused ? '재개' : '일시정지'}</Button>
             <Button onClick={handleUndoAuction}>되돌리기</Button>
             <Button onClick={resetAll}>초기화</Button>
           </div>
         )}
       </div>
 
-      {currentAuction && (
-        <div className="border p-4 mb-4 rounded bg-white shadow">
-          <h3 className="text-lg font-bold mb-2">경매 중: {currentAuction.name}</h3>
-          <div className="mb-2">남은 시간: {timeLeft}초</div>
-          <div className="mb-2">현재 입찰자: {highestBidder || '없음'}</div>
-          <div className="mb-2">입찰가: {currentBid}원</div>
-          {loggedInLeader !== '게스트' && (
-            <div className="flex items-center gap-2 mb-2">
-              <Input
-                type="number"
-                value={currentBid}
-                onChange={e => setCurrentBid(Number(e.target.value))}
-              />
-              <Button onClick={handleBid}>입찰</Button>
-            </div>
-          )}
-          {loggedInLeader === highestBidder && (
-            <Button onClick={handleFinalize}>낙찰 확정</Button>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-semibold text-lg mb-2">경매 선수</h3>
+          {currentAuction ? (
+            <Card>
+              <CardContent>
+                <p>{currentAuction.name}</p>
+                <p>입찰가: {currentBid}원</p>
+                <p>남은 시간: {timeLeft}초</p>
+                {loggedInLeader !== '게스트' && (
+                  <div className="flex gap-2 mt-2">
+                    <Input type="number" value={currentBid} onChange={e => setCurrentBid(parseInt(e.target.value))} />
+                    <Button onClick={handleBid}>입찰</Button>
+                    {highestBidder === loggedInLeader && <Button onClick={handleFinalize}>낙찰</Button>}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ) : (
+            <p>진행 중인 경매가 없습니다.</p>
           )}
         </div>
-      )}
+
+        <div>
+          <h3 className="font-semibold text-lg mb-2">내 팀 정보</h3>
+          {budgets[loggedInLeader] && (
+            <Card>
+              <CardContent>
+                <p>잔여 예산: {budgets[loggedInLeader].budget}원</p>
+                <p>선수 수: {budgets[loggedInLeader].players.length}명</p>
+                <ul className="mt-2 list-disc list-inside">
+                  {budgets[loggedInLeader].players.map(id => {
+                    const player = players.find(p => p.id === id);
+                    return <li key={id}>{player?.name}</li>;
+                  })}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
