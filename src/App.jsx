@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent } from './components/ui/card';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
+import { Card, CardContent } from './components/ui/card';
 
 const teamLeaders = ['강신형', '윤광현', '김동욱', '박현호'];
 const allUsers = [...teamLeaders, '이재혁', '게스트'];
@@ -26,8 +26,6 @@ function AuctionApp() {
   const [players, setPlayers] = useState(initialPlayers);
   const [budgets, setBudgets] = useState(initialBudgets);
   const [loggedInLeader, setLoggedInLeader] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentAuction, setCurrentAuction] = useState(null);
   const [currentBid, setCurrentBid] = useState(0);
   const [highestBidder, setHighestBidder] = useState('');
@@ -132,7 +130,7 @@ function AuctionApp() {
     }
   };
 
-  if (!isLoggedIn) {
+  if (!loggedInLeader) {
     return (
       <div className="p-4 max-w-sm mx-auto">
         <h2 className="text-xl font-bold mb-4">로그인</h2>
