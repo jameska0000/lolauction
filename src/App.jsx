@@ -1,3 +1,4 @@
+
 // src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from './components/ui/card';
@@ -187,8 +188,27 @@ function AuctionApp() {
         )}
       </div>
 
-      {/* 추가된 경매 UI, 선수 카드, 팀 리스트 등은 여기에 들어감 */}
-      {/* 필요 시 계속 확장해 드릴 수 있습니다 */}
+      {currentAuction && (
+        <div className="border p-4 mb-4 rounded bg-white shadow">
+          <h3 className="text-lg font-bold mb-2">경매 중: {currentAuction.name}</h3>
+          <div className="mb-2">남은 시간: {timeLeft}초</div>
+          <div className="mb-2">현재 입찰자: {highestBidder || '없음'}</div>
+          <div className="mb-2">입찰가: {currentBid}원</div>
+          {loggedInLeader !== '게스트' && (
+            <div className="flex items-center gap-2 mb-2">
+              <Input
+                type="number"
+                value={currentBid}
+                onChange={e => setCurrentBid(Number(e.target.value))}
+              />
+              <Button onClick={handleBid}>입찰</Button>
+            </div>
+          )}
+          {loggedInLeader === highestBidder && (
+            <Button onClick={handleFinalize}>낙찰 확정</Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
