@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from './components/ui/card';
 import { Button } from './components/ui/button';
@@ -10,10 +9,10 @@ const allUsers = [...teamLeaders, '이재혁', '게스트'];
 const initialPlayers = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   name: `선수${i + 1}`,
-  position: '',
-  profile: '',
-  image: '',
-  tier: '',
+  position: `포지션${i + 1}`,
+  profile: `선수${i + 1}의 프로필 내용입니다. 이 선수는 경기에 중요한 역할을 합니다.`,
+  image: '',  // 이미지가 없다면 빈 문자열로 표시
+  tier: `티어${i + 1}`,
   price: 0,
   assignedTo: null,
 }));
@@ -115,8 +114,12 @@ function AuctionApp() {
 
   const resetAll = () => {
     if (window.confirm('정말 모든 데이터를 초기화하시겠습니까?')) {
-      setPlayers(initialPlayers);
-      setBudgets(initialBudgets);
+      setPlayers(players.map(player => ({
+        ...player,
+        price: 0,
+        assignedTo: null,
+      })));  // 선수 프로필은 그대로 두고, 가격과 낙찰된 팀을 초기화
+      setBudgets(initialBudgets);  // 예산 초기화
       setCurrentAuction(null);
       setCurrentBid(0);
       setHighestBidder('');
@@ -192,6 +195,7 @@ function AuctionApp() {
                 <p>{currentAuction.name}</p>
                 <p>입찰가: {currentBid}원</p>
                 <p>남은 시간: {timeLeft}초</p>
+                <p>프로필: {currentAuction.profile || '정보 없음'}</p> {/* 프로필이 비어있으면 "정보 없음" 표시 */}
                 {loggedInLeader !== '게스트' && (
                   <div className="flex gap-2 mt-2">
                     <Input type="number" value={currentBid} onChange={e => setCurrentBid(parseInt(e.target.value))} />
@@ -216,7 +220,13 @@ function AuctionApp() {
                 <ul className="mt-2 list-disc list-inside">
                   {budgets[loggedInLeader].players.map(id => {
                     const player = players.find(p => p.id === id);
-                    return <li key={id}>{player?.name}</li>;
+                    return (
+                      <li key={id}>
+                        {player?.name}
+                        <br />
+                        {player?.profile || '프로필 정보 없음'} {/* 비어있는 프로필 정보 표시 */}
+                      </li>
+                    );
                   })}
                 </ul>
               </CardContent>
