@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "npx vite",
     "build": "npx vite build",
-    "preview": "npx vite preview"
+    "preview": "npx vite preview",
+    "postinstall": "npm rebuild"
   },
   "dependencies": {
     "react": "^18.3.1",
